@@ -29,7 +29,11 @@ data "aws_ami" "ami" {
 
 resource "aws_instance" "ansible_server" {
   ami           = data.aws_ami.ami.id
-  instance_type = "t2.small"
+  instance_type = "t2.micro"
+  
+  lifecycle {
+    create_before_destroy = true
+  }
   
   tags = {
     Name = "Server_Demo_Remote_BE_CICD"
