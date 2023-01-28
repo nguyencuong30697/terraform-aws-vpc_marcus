@@ -1,3 +1,42 @@
+terraform {
+  required_providers {
+    aws = {
+      source = "hashicorp/aws"
+      version = "~> 4.0"
+    }
+  }
+}
+
+variable "region" {
+  type = string
+  default = "ap-northeast-1"
+}
+
+provider "aws" {
+  region = var.region
+}
+
+data "aws_ami" "ami" {
+  most_recent = true
+
+  filter {
+    name   = "name"
+    values = ["amzn2-ami-hvm-2.0.*-x86_64-gp2"]
+  }
+
+  owners = ["amazon"]
+}
+
+resource "aws_instance" "ansible_server" {
+  ami           = data.aws_ami.ami.id
+  instance_type = "t2.micro"
+  
+  tags = {
+    Name = "Server_Demo_Remote_BE_CICD"
+  }
+}
+
+
 resource "aws_vpc" "vpc" {
   cidr_block           = var.vpc_cidr_block
   enable_dns_hostnames = true
